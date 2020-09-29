@@ -30,7 +30,9 @@ class Simon:
 	clip_x = 100
 	clip_y = 40
 	now_shoot = False
+	shot_ready = True
 	shot_frame = 0
+	cooltime_frame = 0
 
 	def __init__(self):
 		self.pos = get_canvas_width() //2, get_canvas_height() //2 - 130
@@ -53,7 +55,17 @@ class Simon:
 		self.fra = self.fra_shot
 		self.update_Action(0,0)
 
-	def update(self):
+	def coolTime(self):
+		if self.now_shoot == True:
+			self.shot_ready = False
+			print('now cooltime')
+		if self.cooltime_frame > 20:
+			self.shot_ready = True
+			self.cooltime_frame = 0
+			print('shot ready')
+		self.cooltime_frame += 1
+
+	def update_Shootframe(self):
 		if self.shot_frame > 8:
 			self.now_shoot = False
 			self.shot_frame = 0
@@ -61,6 +73,10 @@ class Simon:
 			self.fra = self.fra_wait
 		if self.now_shoot == True:
 			self.shot_frame += 1
+		self.coolTime()
+
+	def update(self):
+		self.update_Shootframe()
 		x, y = self.pos
 		dx, dy = self.delta
 		self.pos = x + dx, y + dy
@@ -87,5 +103,5 @@ class Simon:
 		pair = (e.type, e.key)
 		if pair in Simon.KEY_MAP:
 			self.update_Delta(*Simon.KEY_MAP[pair])
-		elif pair == Simon.KEYDOWN_SPACE:
+		elif pair == Simon.KEYDOWN_SPACE and self.shot_ready == True:
 			self.shoot()
