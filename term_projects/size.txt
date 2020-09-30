@@ -20,3 +20,41 @@ y축 = 988 ~ 1028
 탄연: x+55 (65 - 10)
 
 785 - 713 = 275
+
+** 스프라이트 분할(09.29)
+
+기준: 32 (+100a)
+
+기존 출력 7 + frame * 100(clip_x)
+
+스프라이트 분할 왼쪽 기준은 32-7 = 25
+프레임 별 x길이는 fire 시에 100이 넘어가기 때문에 더 큰 길이 필요
+Lying down fire 시에는 더 긴 길이 필요 프레임은 12프레임 + 사격시 6~10 프레임 반복(5프레임)
+Lying down fire 시에 좌측의 프레임과 기준점까지 40픽셀 필요
+
+SFX를 따로 출력할 것인가? -> 따로 하자
+
+sprite_simon_waiting.png
+기준점: 30 (+100a)
+8frame
+
+sprite_simon_walking.png
+기준점: 30 (+100a)
+10frame
+
+sprite_simon_firing.png
+기준점: 30 (+110a)
+10frame
+
+sprite_simon_ldfiring(Lying-down).png
+기준점: 50 (+120a)
+12frame (반복사격시 6 ~ 10 프레임 반복)
+스탠딩 머리끝이 38픽셀, 43픽셀 밑까지만 하면 됨 -> 40픽셀
+
+sprite_simon_backstep.png
+기준점: 30 (+90a)
+6frame
+
+sprite_simon_dying.png
+기준점: 30 (+60a)
+16frame
