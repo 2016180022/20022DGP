@@ -1,7 +1,7 @@
 import random
 from pico2d import *
 
-#RES_DIR = '../res'
+RES_DIR = './res'
 
 class Stage:
     def __init__(self):
@@ -10,6 +10,11 @@ class Stage:
         self.image.draw(450, 245, 1200, 400)
     def update(self):
         pass
+
+def point_add(point1, point2):
+	x1,y1 = point1
+	x2,y2 = point2
+	return x1+x2, y1+y2
 
 
 if __name__ == "__main__":
