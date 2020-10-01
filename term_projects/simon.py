@@ -52,6 +52,8 @@ class WaitingState:
 		elif pair == Simon.KEYDOWN_SPACE:
 			self.simon.shoot()
 			self.simon.set_state(FireState)
+		elif pair == Simon.KEYDOWN_C:
+			self.simon.set_state(BackState)
 
 class FireState:
 	@staticmethod
@@ -91,6 +93,53 @@ class FireState:
 			self.simon.delta = point_add(self.simon.delta, Simon.KEY_MAP[pair])
 			if e.type == SDL_KEYUP: return
 
+class BackState:
+	@staticmethod
+	def get(simon):
+		if not hasattr(BackState, 'singleton'):
+			BackState.singleton = BackState()
+			BackState.singleton.simon = simon
+		return BackState.singleton
+
+	def __init__(self):
+		self.image = gfw_image.load(RES_DIR + '/sprite_simon_backstep.png')
+
+	def enter(self):
+		self.time = 0
+		self.frame = 0
+
+	def exit(self):
+		pass
+
+	def draw(self):
+		clip_width = 90
+		clip_height = 60
+		x, y = self.simon.pos
+		sx = self.frame * clip_width
+		self.image.clip_draw(sx, 0, clip_width, clip_height, x, y + 20, 180, 120)
+
+	def update(self):
+		self.time += gfw.delta_time
+		x, y = self.simon.pos
+		frame = self.time * 10
+		if frame < 3:
+			self.frame = int(frame)
+			x -= 1
+			y += 0.5
+		elif frame < 6:
+			self.frame = int(frame)
+			x -= 1
+			y -= 0.5
+		else:
+			self.simon.set_state(WaitingState)
+		self.simon.pos = x, y
+
+	def handle_event(self, e):
+		pair = (e.type, e.key)
+		if pair in Simon.KEY_MAP:
+			self.simon.delta = point_add(self.simon.delta, Simon.KEY_MAP[pair])
+			if e.type == SDL_KEYUP: return
+
 class Simon:
 	KEY_MAP = {
 		(SDL_KEYDOWN, SDLK_LEFT):	(-1, 0),
@@ -99,6 +148,7 @@ class Simon:
 		(SDL_KEYUP, SDLK_RIGHT):	(-1, 0),
 	}
 	KEYDOWN_SPACE = (SDL_KEYDOWN, SDLK_SPACE)
+	KEYDOWN_C = (SDL_KEYDOWN, SDLK_c)
 
 	def __init__(self):
 		self.pos = get_canvas_width() //2, get_canvas_height() //2 - 130
