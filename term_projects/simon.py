@@ -67,6 +67,7 @@ class FireState:
 
 	def __init__(self):
 		self.image = gfw_image.load(RES_DIR + '/sprite_simon_firing.png')
+		self.sfx_image = gfw_image.load(RES_DIR + '/sprite_simon_sfx.png')		
 
 	def enter(self):
 		self.time = 0
@@ -79,13 +80,20 @@ class FireState:
 		clip_width = 110
 		clip_height = 40
 		sx = self.frame * clip_width
+		x, y = self.simon.pos
 		self.image.clip_draw(sx, 0, clip_width, clip_height, *self.simon.pos, 180, 80)
-
+		self.sfx_image.clip_draw(*self.src_rect, x + 85, y + 5, *self.src_large)
+		self.sfx_image.clip_draw(*self.src_rect2, x + 55, y + 5, *self.src_large2)
+		
 	def update(self):
 		self.time += gfw.delta_time
 		frame = self.time * 10
 		if frame < 10:
 			self.frame = int(frame)
+			self.src_rect = Simon.MUZZLE_RECT[int(frame)]
+			self.src_large = Simon.MUZZLE_LARGE[int(frame)]
+			self.src_rect2 = Simon.SMOKE_RECT[int(frame)]
+			self.src_large2 = Simon.SMKOE_LARGE[int(frame)]
 		else:
 			self.simon.set_state(WaitingState)
 
@@ -214,13 +222,63 @@ class Simon:
 		(770, 0, 55, 80),
 		(825, 0, 55, 80),
 	]
-
+	MUZZLE_RECT = [
+		(0, 160, 14, 20),
+		(14, 160, 28, 20),
+		(42, 160, 50, 20),
+		(0, 0, 0, 0),
+		(0, 0, 0, 0),
+		(0, 0, 0, 0),
+		(0, 0, 0, 0),
+		(0, 0, 0, 0),
+		(0, 0, 0, 0),
+		(0, 0, 0, 0)
+	]
+	SMOKE_RECT = [
+		(0, 100, 10, 50),
+		(10, 100, 12, 50),
+		(22, 100, 24, 50),
+		(46, 100, 28, 50),
+		(74, 100, 32, 50),
+		(0, 0, 0, 0),
+		(0, 0, 0, 0),
+		(0, 0, 0, 0),
+		(0, 0, 0, 0),
+		(0, 0, 0, 0)
+	]
+	MUZZLE_LARGE = [
+		(21, 30),
+		(42, 30),
+		(75, 40),
+		(0, 0),
+		(0, 0),
+		(0, 0),
+		(0, 0),
+		(0, 0),
+		(0, 0),
+		(0, 0)
+	]
+	SMKOE_LARGE = [
+		(15, 75),
+		(18, 75),
+		(36, 75),
+		(42, 75),
+		(48, 75),
+		(0, 0),
+		(0, 0),
+		(0, 0),
+		(0, 0),
+		(0, 0)
+	]
 	def __init__(self):
 		self.pos = get_canvas_width() //2, get_canvas_height() //2 - 130
 		self.delta = 0, 0
 		self.time = 0
 		self.state = None
 		self.src_rect = []
+		self.src_rect2 = []
+		self.src_large = []
+		self.src_large2 = []
 		self.set_state(WaitingState)
 
 	def set_state(self, cls):
