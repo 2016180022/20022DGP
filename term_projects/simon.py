@@ -54,6 +54,8 @@ class WaitingState:
 			self.simon.set_state(FireState)
 		elif pair == Simon.KEYDOWN_C:
 			self.simon.set_state(BackState)
+		elif pair == Simon.KEYDOWN_X:
+			self.simon.set_state(DyingState)
 
 class FireState:
 	@staticmethod
@@ -86,6 +88,49 @@ class FireState:
 			self.frame = int(frame)
 		else:
 			self.simon.set_state(WaitingState)
+
+	def handle_event(self, e):
+		pair = (e.type, e.key)
+		if pair in Simon.KEY_MAP:
+			self.simon.delta = point_add(self.simon.delta, Simon.KEY_MAP[pair])
+			if e.type == SDL_KEYUP: return
+
+class DyingState:
+	@staticmethod
+	def get(simon):
+		if not hasattr(DyingState, 'singleton'):
+			DyingState.singleton = DyingState()
+			DyingState.singleton.simon = simon
+		return DyingState.singleton
+
+	def __init__(self):
+		self.image = gfw_image.load(RES_DIR + '/sprite_simon_dying.png')
+
+	def enter(self):
+		self.time = 0
+		self.frame = 0
+
+	def exit(self):
+		pass
+
+	def draw(self):
+		clip_width = 60
+		clip_height = 80
+		x, y = self.simon.pos
+		sx = self.frame * clip_width
+		self.image.clip_draw(*self.src_rect, x - 50, y + 40, 120, 160)
+
+	def update(self):
+		self.time += gfw.delta_time
+		frame = self.time * 10
+		x, y = self.simon.pos
+		if frame < 16:
+			self.frame = int(frame)
+			self.src_rect = Simon.DYING_RECT[int(frame)]
+			x -= 0.1
+		else:
+			self.simon.set_state(WaitingState)
+		self.simon.pos = x,y
 
 	def handle_event(self, e):
 		pair = (e.type, e.key)
@@ -149,12 +194,33 @@ class Simon:
 	}
 	KEYDOWN_SPACE = (SDL_KEYDOWN, SDLK_SPACE)
 	KEYDOWN_C = (SDL_KEYDOWN, SDLK_c)
+	KEYDOWN_X = (SDL_KEYDOWN, SDLK_x)
+
+	DYING_RECT = [
+		(0, 0, 60, 80),
+		(60, 0, 55, 80),
+		(115, 0, 60, 80),
+		(175, 0, 60, 80),
+		(235, 0, 60, 80),
+		(295, 0, 60, 80),
+		(355, 0, 50, 80),
+		(405, 0, 50, 80),
+		(455, 0, 45, 80),
+		(510, 0, 55, 80),
+		(565, 0, 50, 80),
+		(615, 0, 50, 80),
+		(665, 0, 50, 80),
+		(715, 0, 55, 80),
+		(770, 0, 55, 80),
+		(825, 0, 55, 80),
+	]
 
 	def __init__(self):
 		self.pos = get_canvas_width() //2, get_canvas_height() //2 - 130
 		self.delta = 0, 0
 		self.time = 0
 		self.state = None
+		self.src_rect = []
 		self.set_state(WaitingState)
 
 	def set_state(self, cls):
