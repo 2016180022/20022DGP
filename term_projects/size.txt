@@ -58,3 +58,21 @@ sprite_simon_backstep.png
 sprite_simon_dying.png
 기준점: 30 (+60a)
 16frame
+
+rect
+0
+60
+115
+175
+235
+295
+355
+405
+455
+510
+565
+615
+665
+715
+770
+825
