@@ -30,7 +30,7 @@
   
   
 ## 2. Scene의 수 및 각각의 이름  
-![Mitterent 플로우차트](https://github.com/2016180022/demo/blob/master/scene_flowchart.png?raw=true)  
+![Mitterent 플로우차트](https://github.com/2016180022/20022DGP/blob/master/scene_flowchart.png?raw=true)  
 기본 화면은 3종류의 화면이며, 각각 메인 화면, 플레이 화면, 메뉴 화면으로 지정  
   
   
