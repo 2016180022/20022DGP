@@ -4,6 +4,7 @@ from pico2d import *
 import gobj
 from simon import Simon
 from bullet import Bullet
+from enemy import Enemy
 
 canvas_width = 1280
 canvas_height = 960
@@ -16,6 +17,7 @@ def enter():
 
     stage = gobj.ImageObject('background_demo.png', 720, 392, 1920, 640)
     gfw.world.add(gfw.layer.stage, stage)
+    gfw.world.add(gfw.layer.enemy, Enemy())
 
 def update():
     gfw.world.update()
