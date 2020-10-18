@@ -1,8 +1,7 @@
 #Simon
 from pico2d import *
-from gobj import *
+import gobj
 from bullet import Bullet
-import gfw_image
 import gfw
 
 class WaitingState:
@@ -14,8 +13,8 @@ class WaitingState:
 		return WaitingState.singleton
 
 	def __init__(self):
-		self.wait_image = gfw_image.load(RES_DIR + '/sprite_simon_waiting.png')
-		self.walk_image = gfw_image.load(RES_DIR + '/sprite_simon_walking.png')
+		self.wait_image = gfw.image.load(gobj.RES_DIR + '/sprite_simon_waiting.png')
+		self.walk_image = gfw.image.load(gobj.RES_DIR + '/sprite_simon_walking.png')
 
 	def enter(self):
 		self.time = 0
@@ -29,14 +28,14 @@ class WaitingState:
 		clip_height = 40
 		sx = self.frame * clip_width
 		if self.simon.delta != (0, 0):
-			self.walk_image.clip_draw(sx, 0, clip_width, clip_height, *self.simon.pos, 180, 80)
+			self.walk_image.clip_draw(sx, 0, clip_width, clip_height, *self.simon.pos, 288, 128)
 		else:
-			self.wait_image.clip_draw(sx, 0, clip_width, clip_height, *self.simon.pos, 180, 80)
+			self.wait_image.clip_draw(sx, 0, clip_width, clip_height, *self.simon.pos, 288, 128)
 
 	def update(self):
 		frame_number = 8
 		self.time += gfw.delta_time
-		move_obj(self.simon)
+		gobj.move_obj(self.simon)
 		if self.simon.delta == (0, 0):
 			frame_number = 8
 		else:
@@ -47,7 +46,7 @@ class WaitingState:
 	def handle_event(self, e):
 		pair = (e.type, e.key)
 		if pair in Simon.KEY_MAP:
-			self.simon.delta = point_add(self.simon.delta, Simon.KEY_MAP[pair])
+			self.simon.delta = gobj.point_add(self.simon.delta, Simon.KEY_MAP[pair])
 			if e.type == SDL_KEYUP: return			
 		elif pair == Simon.KEYDOWN_SPACE:
 			self.simon.shoot()
@@ -66,8 +65,8 @@ class FireState:
 		return FireState.singleton
 
 	def __init__(self):
-		self.image = gfw_image.load(RES_DIR + '/sprite_simon_firing.png')
-		self.sfx_image = gfw_image.load(RES_DIR + '/sprite_simon_sfx.png')		
+		self.image = gfw.image.load(gobj.RES_DIR + '/sprite_simon_firing.png')
+		self.sfx_image = gfw.image.load(gobj.RES_DIR + '/sprite_simon_sfx.png')		
 
 	def enter(self):
 		self.time = 0
@@ -81,7 +80,7 @@ class FireState:
 		clip_height = 40
 		sx = self.frame * clip_width
 		x, y = self.simon.pos
-		self.image.clip_draw(sx, 0, clip_width, clip_height, *self.simon.pos, 180, 80)
+		self.image.clip_draw(sx, 0, clip_width, clip_height, *self.simon.pos, 288, 128)
 		self.sfx_image.clip_draw(*self.src_rect, x + 85, y + 5, *self.src_large)
 		self.sfx_image.clip_draw(*self.src_rect2, x + 55, y + 5, *self.src_large2)
 		
@@ -100,7 +99,7 @@ class FireState:
 	def handle_event(self, e):
 		pair = (e.type, e.key)
 		if pair in Simon.KEY_MAP:
-			self.simon.delta = point_add(self.simon.delta, Simon.KEY_MAP[pair])
+			self.simon.delta = gobj.point_add(self.simon.delta, Simon.KEY_MAP[pair])
 			if e.type == SDL_KEYUP: return
 
 class DyingState:
@@ -112,7 +111,7 @@ class DyingState:
 		return DyingState.singleton
 
 	def __init__(self):
-		self.image = gfw_image.load(RES_DIR + '/sprite_simon_dying.png')
+		self.image = gfw.image.load(gobj.RES_DIR + '/sprite_simon_dying.png')
 
 	def enter(self):
 		self.time = 0
@@ -126,7 +125,7 @@ class DyingState:
 		clip_height = 80
 		x, y = self.simon.pos
 		sx = self.frame * clip_width
-		self.image.clip_draw(*self.src_rect, x - 50, y + 40, 120, 160)
+		self.image.clip_draw(*self.src_rect, x - 80, y + 64, 192, 256)
 
 	def update(self):
 		self.time += gfw.delta_time
@@ -143,7 +142,7 @@ class DyingState:
 	def handle_event(self, e):
 		pair = (e.type, e.key)
 		if pair in Simon.KEY_MAP:
-			self.simon.delta = point_add(self.simon.delta, Simon.KEY_MAP[pair])
+			self.simon.delta = gobj.point_add(self.simon.delta, Simon.KEY_MAP[pair])
 			if e.type == SDL_KEYUP: return
 
 class BackState:
@@ -155,7 +154,7 @@ class BackState:
 		return BackState.singleton
 
 	def __init__(self):
-		self.image = gfw_image.load(RES_DIR + '/sprite_simon_backstep.png')
+		self.image = gfw.image.load(gobj.RES_DIR + '/sprite_simon_backstep.png')
 
 	def enter(self):
 		self.time = 0
@@ -169,7 +168,7 @@ class BackState:
 		clip_height = 60
 		x, y = self.simon.pos
 		sx = self.frame * clip_width
-		self.image.clip_draw(sx, 0, clip_width, clip_height, x, y + 20, 180, 120)
+		self.image.clip_draw(sx, 0, clip_width, clip_height, x, y + 32, 288, 192)
 
 	def update(self):
 		self.time += gfw.delta_time
@@ -190,7 +189,7 @@ class BackState:
 	def handle_event(self, e):
 		pair = (e.type, e.key)
 		if pair in Simon.KEY_MAP:
-			self.simon.delta = point_add(self.simon.delta, Simon.KEY_MAP[pair])
+			self.simon.delta = gobj.point_add(self.simon.delta, Simon.KEY_MAP[pair])
 			if e.type == SDL_KEYUP: return
 
 class Simon:
@@ -271,7 +270,7 @@ class Simon:
 		(0, 0)
 	]
 	def __init__(self):
-		self.pos = get_canvas_width() //2, get_canvas_height() //2 - 130
+		self.pos = get_canvas_width() //2, get_canvas_height() //2 - 200
 		self.delta = 0, 0
 		self.time = 0
 		self.state = None

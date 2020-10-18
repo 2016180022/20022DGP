@@ -1,7 +1,7 @@
 #bullet
 from pico2d import *
 from gobj import *
-import gfw_image
+import gfw
 
 class Bullet:
     bullets = []
@@ -10,7 +10,7 @@ class Bullet:
     count = 0
 
     def __init__(self, pos):
-        self.image = gfw_image.load(RES_DIR + '/sprite_simon_sfx.png')
+        self.image = gfw.image.load(RES_DIR + '/sprite_simon_sfx.png')
         self.pos = pos
 
     def draw(self):

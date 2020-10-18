@@ -1,22 +1,28 @@
 #game_state
 import gfw
 from pico2d import *
-from gobj import *
+import gobj
 from simon import Simon
 from bullet import Bullet
 
+canvas_width = 1280
+canvas_height = 960
+
 def enter():
-    global stage, simon
-    stage = Stage()
+    gfw.world.init(['stage', 'enemy', 'simon'])
+    global simon
     simon = Simon()
+    gfw.world.add(gfw.layer.simon, simon)
+
+    stage = gobj.ImageObject('background_demo.png', 720, 392, 1920, 640)
+    gfw.world.add(gfw.layer.stage, stage)
 
 def update():
-    simon.update()
+    gfw.world.update()
     for b in Bullet.bullets: b.update()
 
 def draw():
-    stage.draw()
-    simon.draw()
+    gfw.world.draw()
     for b in Bullet.bullets: b.draw()
 
 def handle_event(e):
