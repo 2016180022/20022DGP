@@ -1,8 +1,9 @@
 #Simon
 from pico2d import *
 import gobj
-from bullet import *
 import gfw
+from bullet import *
+from enemy import *
 
 class WaitingState:
 	@staticmethod
@@ -54,7 +55,10 @@ class WaitingState:
 		elif pair == Simon.KEYDOWN_C:
 			self.simon.set_state(BackState)
 		elif pair == Simon.KEYDOWN_X:
-			self.simon.set_state(DyingState)
+			#self.simon.set_state(DyingState)
+			global enemy
+			enemy = Enemy()
+			gfw.world.add(gfw.layer.enemy, enemy)
 
 class FireState:
 	@staticmethod
@@ -291,7 +295,6 @@ class Simon:
 
 	def shoot(self):
 		bullet = Bullet(self.pos)
-		# Bullet.bullets.append(bullet)
 		gfw.world.add(gfw.layer.bullet, bullet)
 
 	def update(self):

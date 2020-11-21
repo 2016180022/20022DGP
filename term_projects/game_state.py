@@ -5,12 +5,13 @@ import gobj
 from simon import Simon
 from bullet import Bullet
 from enemy import Enemy
+from enemy_bullet import EnemyBullet
 
 canvas_width = 1280
 canvas_height = 960
 
 def enter():
-    gfw.world.init(['stage', 'enemy', 'simon', 'bullet'])
+    gfw.world.init(['stage', 'enemy', 'simon', 'bullet', 'enemy_bullet'])
     global simon
     simon = Simon()
     gfw.world.add(gfw.layer.simon, simon)
@@ -28,18 +29,24 @@ def check_enemy(e):
 		simon.die()
 		return
 
-	for b in gfw.gfw.world.objects_at(gfw.layer.bullet):
-			if gobj.collides_box(b, e):
-				print('Enemy Collision', e, b)
-				#e.remove()
-				return
+	for eb in gfw.world.objects_at(gfw.layer.enemy_bullet):
+		if gobj.collides_box(eb, simon):
+			print('Enemy Attack Collision', eb, simon)
+			simon.die()
+			eb.remove()
+			return
+
+	for b in gfw.world.objects_at(gfw.layer.bullet):
+		if gobj.collides_box(b, e):
+			print('Enemy Collision', e, b)
+			e.die()
+			return
 
 def update():
     gfw.world.update()
 
     for e in gfw.world.objects_at(gfw.layer.enemy):
     	check_enemy(e)
-
 
 def draw():
     gfw.world.draw()

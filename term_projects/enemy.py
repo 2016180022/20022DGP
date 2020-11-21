@@ -3,6 +3,7 @@ import random
 import gfw
 import gobj
 import rect
+from enemy_bullet import *
 
 class WaitingState:
 	@staticmethod
@@ -90,6 +91,7 @@ class KnifeState:
 	def enter(self):
 		self.time = 0
 		self.frame = 0
+		self.toggle = True
 
 	def exit(self):
 		pass
@@ -110,6 +112,12 @@ class KnifeState:
 			if self.enemy.cool_time(frame, frame_number):
 				self.enemy.set_state(WaitingState)
 
+		if self.toggle:
+			if self.frame == 8:
+				self.enemy.knife_attack(self.enemy.pos_x, self.enemy.pos_y, self.enemy.type)
+				self.toggle = False
+
+
 class GranadeState:
 	@staticmethod
 	def get(enemy):
@@ -120,10 +128,12 @@ class GranadeState:
 
 	def __init__(self):
 		self.granade_image = gfw.image.load(gobj.RES_DIR + '/sprite_soldier_granade.png')
+		#self.enemy.off_attack()
 
 	def enter(self):
 		self.time = 0
 		self.frame = 0
+		self.toggle = True
 
 	def exit(self):
 		pass
@@ -143,6 +153,43 @@ class GranadeState:
 		else:
 			if self.enemy.cool_time(frame, frame_number):
 				self.enemy.set_state(WaitingState)
+		if self.toggle:
+			if self.frame == 7:
+				self.enemy.throw_granade(self.enemy.pos_x, self.enemy.pos_y, self.enemy.type)
+				self.toggle = False
+
+class DyingState:
+	@staticmethod
+	def get(enemy):
+		if not hasattr(DyingState, 'singleton'):
+			DyingState.singleton = DyingState()
+			DyingState.singleton.enemy = enemy
+		return DyingState.singleton
+
+	def __init__(self):
+		self.dying_image = gfw.image.load(gobj.RES_DIR + '/sprite_soldier_dying.png')
+
+	def enter(self):
+		self.time = 0
+		self.frame = 0
+
+	def exit(self):
+		pass
+
+	def draw(self):
+		clip_height = 39
+		self.dying_rect = rect.ENEMY_DYING_RECT[self.frame]
+		self.dying_size = rect.ENEMY_DYING_SIZE_RECT[self.frame]
+		self.dying_image.clip_draw(*self.dying_rect, self.enemy.pos_x, self.enemy.pos_y + 10, self.dying_size, self.enemy.sizeup_rate * clip_height)
+
+	def update(self):
+		self.time += gfw.delta_time
+		frame_number = 7
+		frame = self.time * 12
+		if frame < frame_number:
+			self.frame = int(frame)
+		else:
+			self.enemy.remove()
 		
 class Enemy:
 	def __init__(self):
@@ -151,14 +198,14 @@ class Enemy:
 		self.sizeup_rate = 3
 		self.delta = 0
 		self.state = None
-		self.attack_ready = True
-		#self.type = random.choice(['knife', 'granade'])
-		self.type = 'knife'
+		self.type = random.choice(['knife', 'granade'])
+		#self.type = 'knife'
+		#self.type = 'granade'
 		layer = list(gfw.world.objects_at(gfw.layer.simon))
 		self.simon = layer[0]
 		self.speed = 80
 		self.sight_range = 400
-		self.knife_range = 50
+		self.knife_range = 30
 		self.granade_range = 200
 		self.frame = 0
 		self.time = 0
@@ -202,6 +249,16 @@ class Enemy:
 		else:
 			return
 
+	def throw_granade(self, x, y, enemytype):
+		enemy_bullet = EnemyBullet(x, y, enemytype)
+		gfw.world.add(gfw.layer.enemy_bullet, enemy_bullet)
+		print('now added granade')
+
+	def knife_attack(self, x, y, enemytype):
+		enemy_bullet = EnemyBullet(x, y, enemytype)
+		gfw.world.add(gfw.layer.enemy_bullet, enemy_bullet)
+		print('now added knife')
+
 	def update(self):
 		self.state.update()
 
@@ -210,6 +267,10 @@ class Enemy:
 
 	def remove(self):
 		gfw.world.remove(self)
+		print('now removed')
+
+	def die(self):
+		self.set_state(DyingState)
 
 	def get_bb(self):
 		x = self.pos_x
