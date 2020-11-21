@@ -17,7 +17,10 @@ def enter():
 
     stage = gobj.ImageObject('background_demo.png', 720, 392, 1920, 640)
     gfw.world.add(gfw.layer.stage, stage)
-    gfw.world.add(gfw.layer.enemy, Enemy())
+    #for i in range (3):
+    global enemy
+    enemy = Enemy()
+    gfw.world.add(gfw.layer.enemy, enemy)
 
 def update():
     gfw.world.update()
