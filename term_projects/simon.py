@@ -1,7 +1,7 @@
 #Simon
 from pico2d import *
 import gobj
-from bullet import Bullet
+from bullet import *
 import gfw
 
 class WaitingState:
@@ -125,6 +125,7 @@ class DyingState:
 		clip_height = 80
 		x, y = self.simon.pos
 		sx = self.frame * clip_width
+		self.src_rect = Simon.DYING_RECT[self.frame]
 		self.image.clip_draw(*self.src_rect, x - 80, y + 64, 192, 256)
 
 	def update(self):
@@ -133,7 +134,6 @@ class DyingState:
 		x, y = self.simon.pos
 		if frame < 16:
 			self.frame = int(frame)
-			self.src_rect = Simon.DYING_RECT[int(frame)]
 			x -= 0.1
 		else:
 			self.simon.set_state(WaitingState)
@@ -219,7 +219,7 @@ class Simon:
 		(665, 0, 50, 80),
 		(715, 0, 55, 80),
 		(770, 0, 55, 80),
-		(825, 0, 55, 80),
+		(825, 0, 55, 80)
 	]
 	MUZZLE_RECT = [
 		(0, 160, 14, 20),
@@ -291,11 +291,22 @@ class Simon:
 
 	def shoot(self):
 		bullet = Bullet(self.pos)
-		Bullet.bullets.append(bullet)
-
+		# Bullet.bullets.append(bullet)
+		gfw.world.add(gfw.layer.bullet, bullet)
 
 	def update(self):
 		self.state.update()
 
 	def handle_event(self, e):
 		self.state.handle_event(e)
+
+	def die(self):
+		self.set_state(DyingState)
+
+	def get_bb(self):
+		width = 25
+		height = 64
+		col_move = 60
+		x, y = self.pos
+		x -= col_move
+		return x - width, y - height, x + width, y + height

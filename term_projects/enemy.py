@@ -152,7 +152,8 @@ class Enemy:
 		self.delta = 0
 		self.state = None
 		self.attack_ready = True
-		self.type = random.choice(['knife', 'granade'])
+		#self.type = random.choice(['knife', 'granade'])
+		self.type = 'knife'
 		layer = list(gfw.world.objects_at(gfw.layer.simon))
 		self.simon = layer[0]
 		self.speed = 80
@@ -206,3 +207,13 @@ class Enemy:
 
 	def draw(self):
 		self.state.draw()
+
+	def remove(self):
+		gfw.world.remove(self)
+
+	def get_bb(self):
+		x = self.pos_x
+		y = self.pos_y
+		width = 40
+		height = 60
+		return x - width, y - height, x + width, y + height
