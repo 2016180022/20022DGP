@@ -14,8 +14,8 @@ class WaitingState:
 		return WaitingState.singleton
 
 	def __init__(self):
-		self.wait_image = gfw.image.load(gobj.RES_DIR + '/sprite_simon_waiting.png')
-		self.walk_image = gfw.image.load(gobj.RES_DIR + '/sprite_simon_walking.png')
+		self.wait_image = gfw.image.load(gobj.RES_DIR + 'sprite_simon_waiting.png')
+		self.walk_image = gfw.image.load(gobj.RES_DIR + 'sprite_simon_walking.png')
 
 	def enter(self):
 		self.time = 0
@@ -69,8 +69,8 @@ class FireState:
 		return FireState.singleton
 
 	def __init__(self):
-		self.image = gfw.image.load(gobj.RES_DIR + '/sprite_simon_firing.png')
-		self.sfx_image = gfw.image.load(gobj.RES_DIR + '/sprite_simon_sfx.png')		
+		self.image = gfw.image.load(gobj.RES_DIR + 'sprite_simon_firing.png')
+		self.sfx_image = gfw.image.load(gobj.RES_DIR + 'sprite_simon_sfx.png')		
 
 	def enter(self):
 		self.time = 0
@@ -115,7 +115,7 @@ class DyingState:
 		return DyingState.singleton
 
 	def __init__(self):
-		self.image = gfw.image.load(gobj.RES_DIR + '/sprite_simon_dying.png')
+		self.image = gfw.image.load(gobj.RES_DIR + 'sprite_simon_dying.png')
 
 	def enter(self):
 		self.time = 0
@@ -158,7 +158,7 @@ class BackState:
 		return BackState.singleton
 
 	def __init__(self):
-		self.image = gfw.image.load(gobj.RES_DIR + '/sprite_simon_backstep.png')
+		self.image = gfw.image.load(gobj.RES_DIR + 'sprite_simon_backstep.png')
 
 	def enter(self):
 		self.time = 0
@@ -198,10 +198,10 @@ class BackState:
 
 class Simon:
 	KEY_MAP = {
-		(SDL_KEYDOWN, SDLK_LEFT):	(-1, 0),
-		(SDL_KEYDOWN, SDLK_RIGHT):	(1, 0),
-		(SDL_KEYUP, SDLK_LEFT):		(1, 0),
-		(SDL_KEYUP, SDLK_RIGHT):	(-1, 0),
+		(SDL_KEYDOWN, SDLK_LEFT):	(-3, 0),
+		(SDL_KEYDOWN, SDLK_RIGHT):	(3, 0),
+		(SDL_KEYUP, SDLK_LEFT):		(3, 0),
+		(SDL_KEYUP, SDLK_RIGHT):	(-3, 0),
 	}
 	KEYDOWN_SPACE = (SDL_KEYDOWN, SDLK_SPACE)
 	KEYDOWN_C = (SDL_KEYDOWN, SDLK_c)
@@ -274,7 +274,7 @@ class Simon:
 		(0, 0)
 	]
 	def __init__(self):
-		self.pos = get_canvas_width() //2, get_canvas_height() //2 - 200
+		self.pos = get_canvas_width() //2 - 400, get_canvas_height() //2 - 200
 		self.delta = 0, 0
 		self.time = 0
 		self.state = None

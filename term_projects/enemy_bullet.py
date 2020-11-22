@@ -9,7 +9,7 @@ class EnemyBullet:
 		self.x, self.y = x, y
 		self.type = enemytype
 		self.delta = 0.1
-		self.granade_image = gfw.image.load(RES_DIR + '/sprite_enemy_granade.png')
+		self.granade_image = gfw.image.load(RES_DIR + 'sprite_enemy_granade.png')
 		self.time = 0
 		self.knife_toggle = True
 

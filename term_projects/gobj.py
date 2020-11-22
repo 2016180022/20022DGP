@@ -2,7 +2,7 @@
 from pico2d import *
 import gfw
 
-RES_DIR = './res'
+RES_DIR = './res/'
 
 def point_add(point1, point2):
 	x1,y1 = point1
@@ -30,7 +30,7 @@ def draw_collision_box():
 
 class ImageObject:
 	def __init__(self, imageName, x, y, x2, y2):
-		self.image = gfw.image.load(RES_DIR + '/' + imageName)
+		self.image = gfw.image.load(RES_DIR + imageName)
 		self.x, self.y = x, y
 		self.x2, self.y2 = x2, y2
 	def draw(self):

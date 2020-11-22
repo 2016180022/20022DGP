@@ -8,13 +8,13 @@ from enemy_bullet import *
 class WaitingState:
 	@staticmethod
 	def get(enemy):
-		if not hasattr(WaitingState, 'singleton'):
-			WaitingState.singleton = WaitingState()
-			WaitingState.singleton.enemy = enemy
+		#if not hasattr(WaitingState, 'singleton'):
+		WaitingState.singleton = WaitingState()
+		WaitingState.singleton.enemy = enemy
 		return WaitingState.singleton
 
 	def __init__(self):
-		self.wait_image = gfw.image.load(gobj.RES_DIR + '/sprite_soldier_waiting.png')
+		self.wait_image = gfw.image.load(gobj.RES_DIR + 'sprite_soldier_waiting.png')
 
 	def enter(self):
 		self.time = 0
@@ -40,13 +40,13 @@ class WaitingState:
 class WalkingState:
 	@staticmethod
 	def get(enemy):
-		if not hasattr(WalkingState, 'singleton'):
-			WalkingState.singleton = WalkingState()
-			WalkingState.singleton.enemy = enemy
+		#if not hasattr(WalkingState, 'singleton'):
+		WalkingState.singleton = WalkingState()
+		WalkingState.singleton.enemy = enemy
 		return WalkingState.singleton
 
 	def __init__(self):
-		self.walk_image = gfw.image.load(gobj.RES_DIR + '/sprite_soldier_walking.png')
+		self.walk_image = gfw.image.load(gobj.RES_DIR + 'sprite_soldier_walking.png')
 
 	def enter(self):
 		self.time = 0
@@ -80,13 +80,13 @@ class WalkingState:
 class KnifeState:
 	@staticmethod
 	def get(enemy):
-		if not hasattr(KnifeState, 'singleton'):
-			KnifeState.singleton = KnifeState()
-			KnifeState.singleton.enemy = enemy
+		#if not hasattr(KnifeState, 'singleton'):
+		KnifeState.singleton = KnifeState()
+		KnifeState.singleton.enemy = enemy
 		return KnifeState.singleton
 
 	def __init__(self):
-		self.knife_image = gfw.image.load(gobj.RES_DIR + '/sprite_soldier_knife.png')
+		self.knife_image = gfw.image.load(gobj.RES_DIR + 'sprite_soldier_knife.png')
 
 	def enter(self):
 		self.time = 0
@@ -121,13 +121,13 @@ class KnifeState:
 class GranadeState:
 	@staticmethod
 	def get(enemy):
-		if not hasattr(GranadeState, 'singleton'):
-			GranadeState.singleton = GranadeState()
-			GranadeState.singleton.enemy = enemy
+		#if not hasattr(GranadeState, 'singleton'):
+		GranadeState.singleton = GranadeState()
+		GranadeState.singleton.enemy = enemy
 		return GranadeState.singleton
 
 	def __init__(self):
-		self.granade_image = gfw.image.load(gobj.RES_DIR + '/sprite_soldier_granade.png')
+		self.granade_image = gfw.image.load(gobj.RES_DIR + 'sprite_soldier_granade.png')
 		#self.enemy.off_attack()
 
 	def enter(self):
@@ -161,20 +161,20 @@ class GranadeState:
 class DyingState:
 	@staticmethod
 	def get(enemy):
-		if not hasattr(DyingState, 'singleton'):
-			DyingState.singleton = DyingState()
-			DyingState.singleton.enemy = enemy
+		#if not hasattr(DyingState, 'singleton'):
+		DyingState.singleton = DyingState()
+		DyingState.singleton.enemy = enemy
 		return DyingState.singleton
 
 	def __init__(self):
-		self.dying_image = gfw.image.load(gobj.RES_DIR + '/sprite_soldier_dying.png')
+		self.dying_image = gfw.image.load(gobj.RES_DIR + 'sprite_soldier_dying.png')
 
 	def enter(self):
 		self.time = 0
 		self.frame = 0
 
 	def exit(self):
-		pass
+		print('now dyingstate called')
 
 	def draw(self):
 		clip_height = 39
@@ -193,7 +193,7 @@ class DyingState:
 		
 class Enemy:
 	def __init__(self):
-		self.pos_x = random.randint(1000, 1200)
+		self.pos_x = random.randint(800, 900)
 		self.pos_y = 280
 		self.sizeup_rate = 3
 		self.delta = 0
@@ -212,8 +212,8 @@ class Enemy:
 		self.set_state(WaitingState)
 
 	def set_state(self, cls):
-		if self.state != None:
-			self.state.exit()
+		#if self.state != None:
+			#self.state.exit()
 		self.state = cls.get(self)
 		self.state.enter()
 		

@@ -6,22 +6,37 @@ from simon import Simon
 from bullet import Bullet
 from enemy import Enemy
 from enemy_bullet import EnemyBullet
+from background import BackgroundScroll
+from background import FrontgroundScroll
+from background import BiggroundScroll
 
-canvas_width = 1280
-canvas_height = 960
+canvas_width = 960
+canvas_height = 720
 
 def enter():
-    gfw.world.init(['stage', 'enemy', 'simon', 'bullet', 'enemy_bullet'])
+    #gfw.world.init(['bigground','background', 'enemy', 'simon', 'bullet', 'enemy_bullet', 'frontground'])
+    gfw.world.init(['background', 'enemy', 'simon', 'bullet', 'enemy_bullet', 'frontground'])
+
     global simon
     simon = Simon()
     gfw.world.add(gfw.layer.simon, simon)
-
-    stage = gobj.ImageObject('background_demo.png', 720, 392, 1920, 640)
-    gfw.world.add(gfw.layer.stage, stage)
+    # global bigground
+    # bigground = BiggroundScroll('bigground_demo.png')
+    # gfw.world.add(gfw.layer.bigground, bigground)
+    global background
+    background = BackgroundScroll('background.png')
+    gfw.world.add(gfw.layer.background, background)    
+    global frontground
+    frontground = FrontgroundScroll('frontground.png')
+    gfw.world.add(gfw.layer.frontground, frontground)
+    #simon.pos = stage.center
+    background.target = simon
+    frontground.target = simon
+    #bigground.target = simon
     #for i in range (3):
     global enemy
-    enemy = Enemy()
-    gfw.world.add(gfw.layer.enemy, enemy)
+    #enemy = Enemy()
+    #gfw.world.add(gfw.layer.enemy, enemy)
 
 def check_enemy(e):
 	if gobj.collides_box(simon, e):
@@ -40,6 +55,7 @@ def check_enemy(e):
 		if gobj.collides_box(b, e):
 			print('Enemy Collision', e, b)
 			e.die()
+			b.remove()
 			return
 
 def update():

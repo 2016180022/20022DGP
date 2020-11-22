@@ -5,7 +5,7 @@ import gfw
 
 class Bullet:
     def __init__(self, pos):
-        self.image = gfw.image.load(RES_DIR + '/sprite_simon_sfx.png')
+        self.image = gfw.image.load(RES_DIR + 'sprite_simon_sfx.png')
         x, y = pos
         self.pos = x + 55, y + 5
         self.dx = 1
