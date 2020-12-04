@@ -4,6 +4,7 @@ import gobj
 import gfw
 from bullet import *
 from enemy import *
+from map_loader import Obj
 
 class WaitingState:
 	@staticmethod
@@ -28,15 +29,21 @@ class WaitingState:
 		clip_width = 100
 		clip_height = 40
 		sx = self.frame * clip_width
+		# if self.simon.delta != (0, 0):
+		# 	self.walk_image.clip_draw(sx, 0, clip_width, clip_height, *self.simon.pos, 288, 128)
+		# else:
+		# 	self.wait_image.clip_draw(sx, 0, clip_width, clip_height, *self.simon.pos, 288, 128)
 		if self.simon.delta != (0, 0):
-			self.walk_image.clip_draw(sx, 0, clip_width, clip_height, *self.simon.pos, 288, 128)
+			self.walk_image.clip_draw(sx, 0, clip_width, clip_height, *self.simon.draw_pos, 288, 128)
 		else:
-			self.wait_image.clip_draw(sx, 0, clip_width, clip_height, *self.simon.pos, 288, 128)
+			self.wait_image.clip_draw(sx, 0, clip_width, clip_height, *self.simon.draw_pos, 288, 128)
 
 	def update(self):
+		self.simon.check_position()
 		frame_number = 8
 		self.time += gfw.delta_time
 		gobj.move_obj(self.simon)
+		gobj.move_draw_obj(self.simon)
 		if self.simon.delta == (0, 0):
 			frame_number = 8
 		else:
@@ -55,10 +62,10 @@ class WaitingState:
 		elif pair == Simon.KEYDOWN_C:
 			self.simon.set_state(BackState)
 		elif pair == Simon.KEYDOWN_X:
-			#self.simon.set_state(DyingState)
-			global enemy
-			enemy = Enemy()
-			gfw.world.add(gfw.layer.enemy, enemy)
+			self.simon.set_state(DyingState)
+			# global enemy
+			# enemy = Enemy()
+			# gfw.world.add(gfw.layer.enemy, enemy)
 
 class FireState:
 	@staticmethod
@@ -83,8 +90,10 @@ class FireState:
 		clip_width = 110
 		clip_height = 40
 		sx = self.frame * clip_width
-		x, y = self.simon.pos
-		self.image.clip_draw(sx, 0, clip_width, clip_height, *self.simon.pos, 288, 128)
+		#x, y = self.simon.pos
+		x, y = self.simon.draw_pos
+		#self.image.clip_draw(sx, 0, clip_width, clip_height, *self.simon.pos, 288, 128)
+		self.image.clip_draw(sx, 0, clip_width, clip_height, *self.simon.draw_pos, 288, 128)
 		self.sfx_image.clip_draw(*self.src_rect, x + 85, y + 5, *self.src_large)
 		self.sfx_image.clip_draw(*self.src_rect2, x + 55, y + 5, *self.src_large2)
 		
@@ -127,7 +136,8 @@ class DyingState:
 	def draw(self):
 		clip_width = 60
 		clip_height = 80
-		x, y = self.simon.pos
+		#x, y = self.simon.pos
+		x, y = self.simon.draw_pos
 		sx = self.frame * clip_width
 		self.src_rect = Simon.DYING_RECT[self.frame]
 		self.image.clip_draw(*self.src_rect, x - 80, y + 64, 192, 256)
@@ -135,13 +145,15 @@ class DyingState:
 	def update(self):
 		self.time += gfw.delta_time
 		frame = self.time * 10
-		x, y = self.simon.pos
+		#x, y = self.simon.pos
+		x, y = self.simon.draw_pos
 		if frame < 16:
 			self.frame = int(frame)
 			x -= 0.1
 		else:
 			self.simon.set_state(WaitingState)
-		self.simon.pos = x,y
+		#self.simon.pos = x,y
+		self.simon.draw_pos = x, y
 
 	def handle_event(self, e):
 		pair = (e.type, e.key)
@@ -170,13 +182,15 @@ class BackState:
 	def draw(self):
 		clip_width = 90
 		clip_height = 60
-		x, y = self.simon.pos
+		#x, y = self.simon.pos
+		x, y = self.simon.draw_pos
 		sx = self.frame * clip_width
 		self.image.clip_draw(sx, 0, clip_width, clip_height, x, y + 32, 288, 192)
 
 	def update(self):
 		self.time += gfw.delta_time
-		x, y = self.simon.pos
+		#x, y = self.simon.pos
+		x, y = self.simon.draw_pos
 		frame = self.time * 10
 		if frame < 3:
 			self.frame = int(frame)
@@ -188,7 +202,8 @@ class BackState:
 			y -= 0.5
 		else:
 			self.simon.set_state(WaitingState)
-		self.simon.pos = x, y
+		#self.simon.pos = x, y
+		self.simon.draw_pos = x, y
 
 	def handle_event(self, e):
 		pair = (e.type, e.key)
@@ -275,6 +290,7 @@ class Simon:
 	]
 	def __init__(self):
 		self.pos = get_canvas_width() //2 - 400, get_canvas_height() //2 - 200
+		self.draw_pos = get_canvas_width() //2 - 400, get_canvas_height() //2 - 200
 		self.delta = 0, 0
 		self.time = 0
 		self.state = None
@@ -294,7 +310,8 @@ class Simon:
 		self.state.draw()
 
 	def shoot(self):
-		bullet = Bullet(self.pos)
+		#bullet = Bullet(self.pos)
+		bullet = Bullet(self.draw_pos)
 		gfw.world.add(gfw.layer.bullet, bullet)
 
 	def update(self):
@@ -310,6 +327,21 @@ class Simon:
 		width = 25
 		height = 64
 		col_move = 60
-		x, y = self.pos
+		#x, y = self.pos
+		x, y = self.draw_pos
 		x -= col_move
 		return x - width, y - height, x + width, y + height
+
+	def check_position(self):
+		for p in gfw.world.objects_at(gfw.layer.platform):
+			ox, oy = p.pos
+			ow, oh = p.size
+			sx, sy = self.pos
+			dsx, dsy = self.draw_pos
+			if sx > ox and sx < ox + ow:
+				dsy = oy
+			elif sx < ox + ow and sx > ox:
+				dsy = oy
+			self.draw_pos = dsx, dsy
+			print('now x, y: ', dsx, dsy)
+

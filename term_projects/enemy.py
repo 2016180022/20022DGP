@@ -117,7 +117,6 @@ class KnifeState:
 				self.enemy.knife_attack(self.enemy.pos_x, self.enemy.pos_y, self.enemy.type)
 				self.toggle = False
 
-
 class GranadeState:
 	@staticmethod
 	def get(enemy):
@@ -194,12 +193,12 @@ class DyingState:
 class Enemy:
 	def __init__(self):
 		self.pos_x = random.randint(800, 900)
-		self.pos_y = 280
+		self.pos_y = get_canvas_height() //2 - 200
 		self.sizeup_rate = 3
 		self.delta = 0
 		self.state = None
-		self.type = random.choice(['knife', 'granade'])
-		#self.type = 'knife'
+		#self.type = random.choice(['knife', 'granade'])
+		self.type = 'knife'
 		#self.type = 'granade'
 		layer = list(gfw.world.objects_at(gfw.layer.simon))
 		self.simon = layer[0]
@@ -219,7 +218,8 @@ class Enemy:
 		
 	def find_target(self):
 		x = self.pos_x
-		tx, ty = self.simon.pos
+		#tx, ty = self.simon.pos
+		tx, ty = self.simon.draw_pos
 		dx = x - tx
 
 		if dx < self.sight_range:
@@ -231,7 +231,8 @@ class Enemy:
 
 	def check_distance(self):
 		x = self.pos_x
-		tx, ty = self.simon.pos
+		#tx, ty = self.simon.pos
+		tx, ty = self.simon.draw_pos
 		dx = x - tx
 
 		if self.type == 'knife':

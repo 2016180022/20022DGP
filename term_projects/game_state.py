@@ -9,34 +9,35 @@ from enemy_bullet import EnemyBullet
 from background import BackgroundScroll
 from background import FrontgroundScroll
 from background import BiggroundScroll
+import map_loader
 
 canvas_width = 960
 canvas_height = 720
 
 def enter():
-    #gfw.world.init(['bigground','background', 'enemy', 'simon', 'bullet', 'enemy_bullet', 'frontground'])
-    gfw.world.init(['background', 'enemy', 'simon', 'bullet', 'enemy_bullet', 'frontground'])
+    gfw.world.init(['bigground','background', 'enemy', 'abigail', 'simon', 'bullet', 'enemy_bullet', 'frontground', 'ui', 'platform'])
+    map_loader.load()
+    #gfw.world.init(['background', 'enemy', 'simon', 'bullet', 'enemy_bullet', 'frontground'])
 
     global simon
     simon = Simon()
     gfw.world.add(gfw.layer.simon, simon)
-    # global bigground
-    # bigground = BiggroundScroll('bigground_demo.png')
-    # gfw.world.add(gfw.layer.bigground, bigground)
+    global bigground
+    bigground = BiggroundScroll('bigground_demo.png')
+    gfw.world.add(gfw.layer.bigground, bigground)
     global background
     background = BackgroundScroll('background.png')
     gfw.world.add(gfw.layer.background, background)    
     global frontground
     frontground = FrontgroundScroll('frontground.png')
     gfw.world.add(gfw.layer.frontground, frontground)
-    #simon.pos = stage.center
     background.target = simon
     frontground.target = simon
-    #bigground.target = simon
+    bigground.target = simon
     #for i in range (3):
     global enemy
-    #enemy = Enemy()
-    #gfw.world.add(gfw.layer.enemy, enemy)
+    enemy = Enemy()
+    gfw.world.add(gfw.layer.enemy, enemy)
 
 def check_enemy(e):
 	if gobj.collides_box(simon, e):
@@ -53,7 +54,7 @@ def check_enemy(e):
 
 	for b in gfw.world.objects_at(gfw.layer.bullet):
 		if gobj.collides_box(b, e):
-			print('Enemy Collision', e, b)
+			print('Enemy Collision', b, e)
 			e.die()
 			b.remove()
 			return

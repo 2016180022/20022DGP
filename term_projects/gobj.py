@@ -12,6 +12,9 @@ def point_add(point1, point2):
 def move_obj(obj):
 	obj.pos = point_add(obj.pos, obj.delta)
 
+def move_draw_obj(obj):
+	obj.draw_pos = point_add(obj.draw_pos, obj.delta)
+
 def collides_box(a,b):
 	(la, ba, ra, ta) = a.get_bb()
 	(lb, bb, rb, tb) = b.get_bb()
