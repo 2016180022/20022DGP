@@ -132,7 +132,6 @@ class DyingState:
 
 	def exit(self):
 		pass
-
 	def draw(self):
 		clip_width = 60
 		clip_height = 80
@@ -150,8 +149,10 @@ class DyingState:
 		if frame < 16:
 			self.frame = int(frame)
 			x -= 0.1
+			self.simon_die = True
 		else:
-			self.simon.set_state(WaitingState)
+			self.simon_die = True
+			print('simon die')
 		#self.simon.pos = x,y
 		self.simon.draw_pos = x, y
 
@@ -189,20 +190,22 @@ class BackState:
 
 	def update(self):
 		self.time += gfw.delta_time
-		#x, y = self.simon.pos
-		x, y = self.simon.draw_pos
+		x, y = self.simon.pos
+		dx, dy = self.simon.draw_pos
 		frame = self.time * 10
 		if frame < 3:
 			self.frame = int(frame)
+			dx -= 1
 			x -= 1
 			y += 0.5
 		elif frame < 6:
 			self.frame = int(frame)
-			x -= 1
+			dx -= 1
+			x -=1
 			y -= 0.5
 		else:
 			self.simon.set_state(WaitingState)
-		#self.simon.pos = x, y
+		self.simon.pos = x, y
 		self.simon.draw_pos = x, y
 
 	def handle_event(self, e):
@@ -289,16 +292,19 @@ class Simon:
 		(0, 0)
 	]
 	def __init__(self):
-		self.pos = get_canvas_width() //2 - 400, get_canvas_height() //2 - 200
-		self.draw_pos = get_canvas_width() //2 - 400, get_canvas_height() //2 - 200
-		self.delta = 0, 0
-		self.time = 0
-		self.state = None
+		self.reset()
+		# self.pos = get_canvas_width() //2 - 400, get_canvas_height() //2 - 200
+		# self.draw_pos = get_canvas_width() //2 - 400, get_canvas_height() //2 - 200
+		# self.delta = 0, 0
+		# self.time = 0
+		# self.state = None
 		self.src_rect = []
 		self.src_rect2 = []
 		self.src_large = []
 		self.src_large2 = []
-		self.set_state(WaitingState)
+		# self.set_state(WaitingState)
+		self.wav_shoot = load_wav('res/gen_2A.wav')
+		self.wav_shoot.set_volume(10)
 
 	def set_state(self, cls):
 		if self.state != None:
@@ -310,6 +316,8 @@ class Simon:
 		self.state.draw()
 
 	def shoot(self):
+		global wav_shoot
+		self.wav_shoot.play()
 		#bullet = Bullet(self.pos)
 		bullet = Bullet(self.draw_pos)
 		gfw.world.add(gfw.layer.bullet, bullet)
@@ -339,9 +347,31 @@ class Simon:
 			sx, sy = self.pos
 			dsx, dsy = self.draw_pos
 			if sx > ox and sx < ox + ow:
-				dsy = oy
+				# dsy = oy
+				# sy = oy
+				if dsy > oy:
+					dsy -= 1
+				elif dsy <= oy:
+					dsy = oy
+					sy = oy
 			elif sx < ox + ow and sx > ox:
-				dsy = oy
+				# dsy = oy
+				# sy = oy
+				if dsy > oy:
+					dsy -= 1
+				elif dsy <= oy:
+					dsy = oy
+					sy = oy
 			self.draw_pos = dsx, dsy
-			print('now x, y: ', dsx, dsy)
+			self.pos = sx, sy
+			#print('now x, y: ', dsx, dsy)
+			#print('now real x, y: ', sx, sy)
 
+	def reset(self):
+		self.pos = get_canvas_width() //2 - 400, get_canvas_height() //2 - 200
+		self.draw_pos = get_canvas_width() //2 - 400, get_canvas_height() //2 - 200
+		self.delta = 0, 0
+		self.time = 0
+		self.simon_die = False
+		self.state = None
+		self.set_state(WaitingState)

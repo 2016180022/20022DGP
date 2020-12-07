@@ -27,7 +27,7 @@ def all_objects():
 			yield obj
 
 def objects_at(layer_index):
-	for obj in ojbects[layer_index]:
+	for obj in objects[layer_index]:
 		yield obj
 
 def count_at(layer_index):

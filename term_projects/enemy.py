@@ -4,6 +4,7 @@ import gfw
 import gobj
 import rect
 from enemy_bullet import *
+from map_loader import Obj
 
 class WaitingState:
 	@staticmethod
@@ -30,6 +31,7 @@ class WaitingState:
 		self.wait_image.clip_draw(sx, 0, clip_width, clip_height, self.enemy.pos_x, self.enemy.pos_y, self.enemy.sizeup_rate * clip_width, self.enemy.sizeup_rate * clip_height)
 
 	def update(self):
+		self.enemy.check_position()
 		self.enemy.find_target()
 		self.time += gfw.delta_time
 		frame_number = 4
@@ -62,6 +64,7 @@ class WalkingState:
 		self.walk_image.clip_draw(*self.walking_rect, self.enemy.pos_x, self.enemy.pos_y, self.walking_size, self.enemy.sizeup_rate * clip_height)
 
 	def update(self):
+		self.enemy.check_position()
 		self.enemy.check_distance()
 		x = self.enemy.pos_x
 		dx = self.enemy.delta
@@ -191,19 +194,19 @@ class DyingState:
 			self.enemy.remove()
 		
 class Enemy:
-	def __init__(self):
-		self.pos_x = random.randint(800, 900)
-		self.pos_y = get_canvas_height() //2 - 200
+	def __init__(self, pos_x, pos_y):
+		self.pos_x = pos_x
+		self.pos_y = pos_y
 		self.sizeup_rate = 3
 		self.delta = 0
 		self.state = None
-		#self.type = random.choice(['knife', 'granade'])
-		self.type = 'knife'
+		self.type = random.choice(['knife', 'granade'])
+		#self.type = 'knife'
 		#self.type = 'granade'
 		layer = list(gfw.world.objects_at(gfw.layer.simon))
 		self.simon = layer[0]
-		self.speed = 80
-		self.sight_range = 400
+		self.speed = 120
+		self.sight_range = 600
 		self.knife_range = 30
 		self.granade_range = 200
 		self.frame = 0
@@ -279,3 +282,16 @@ class Enemy:
 		width = 40
 		height = 60
 		return x - width, y - height, x + width, y + height
+
+	def check_position(self):
+		for p in gfw.world.objects_at(gfw.layer.platform):
+			ox, oy = p.pos
+			ow, oh = p.size
+			sx, sy = self.pos_x, self.pos_y
+			if sx > ox and sx < ox + ow:
+				sy = oy
+			elif sx < ox + ow and sx > ox:
+				sy = oy
+			#sy = oy
+			self.pos_x, self.pos_y = sx, sy
+			#print('enemy in ', sx, sy)
